@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.springmvcdemo.core.dao.EmployeeDao;
 import com.springmvcdemo.core.pojo.Employee;
 
@@ -31,17 +34,18 @@ public class EmployeeController {
      *  into model object. You need to mention RequestMethod.POST method   
      *  because default request is GET*/    
     @RequestMapping(value="/save",method = RequestMethod.POST)    
-    public String save(@ModelAttribute("emp") Employee emp){    
-        employeeDao.save(emp);    
-        return "redirect:/viewemp";//will redirect to viewemp request mapping    
+    public ModelAndView  save(@ModelAttribute("emp") Employee emp,RedirectAttributes rm){    
+        employeeDao.save(emp);   
+        rm.addFlashAttribute("message", "Saved");
+        rm.addAttribute("nonflash", "nonflashvalue");
+        return new ModelAndView("redirect:/viewemp");//will redirect to viewemp request mapping    
     }
     
     /* It provides list of employees in model object */    
     @RequestMapping("/viewemp")    
-    public String viewemp(Model m){    
+    public ModelAndView viewemp(ModelAndView m){    
         List<Employee> list=employeeDao.getEmployees();    
-        m.addAttribute("list",list);  
-        return "viewemp";    
+        return new ModelAndView("viewemp","list",list);    
     }
     
     /* It displays object data into form for the given id.   
